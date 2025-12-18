@@ -1,18 +1,19 @@
 # 🤖 Next LLM Chatbot (Next.js + Ollama)
 
 A modern, ChatGPT-style AI chat application built with **Next.js (App Router)** and powered by a **local Large Language Model (LLM)** using **Ollama**.  
-This project demonstrates clean frontend architecture, GenAI integration, and real-world chat application patterns.
+This project demonstrates clean frontend architecture, **real-time streaming AI responses**, prompt engineering, and real-world GenAI application patterns.
 
 ---
 
 ## ✨ Features
 
-- 🧠 AI-powered chat using a **local LLM (Ollama + LLaMA / Phi-3)**
+- 🧠 AI-powered chat using a **local LLM (Ollama + LLaMA 3 / Phi-3)**
 - 💬 Chat-style UI with user & assistant message bubbles
-- ⏳ Loading / thinking indicator while AI responds
+- ⚡ **Real-time streaming responses (token-by-token)**
+- ⏳ Typing / thinking indicator during AI generation
 - 💾 Persistent chat history using **browser localStorage**
 - 🧩 Clean separation of concerns (UI, hooks, storage, API)
-- ⚡ Built with **Next.js App Router**
+- 🎯 Structured **system prompt management**
 - 🔌 LLM-agnostic backend design (easy to switch models/providers)
 
 ---
@@ -25,7 +26,8 @@ This project demonstrates clean frontend architecture, GenAI integration, and re
 - **Models:** LLaMA 3 / Phi-3 (configurable)
 - **State Management:** React Hooks
 - **Persistence:** Browser `localStorage`
-- **Styling:** CSS / Tailwind CSS (optional)
+- **Streaming:** Fetch API + ReadableStream (NDJSON)
+- **Styling:** CSS / Tailwind CSS
 
 ---
 
@@ -41,16 +43,18 @@ src/
 │   │
 │   └─ api/
 │       └─ chat/
-│           └─ route.js       # Backend API → Ollama integration
+│           └─ route.js       # Streaming API → Ollama integration
 │
 ├─ hooks/
-│   └─ useChat.js             # Chat logic & state management
+│   └─ useChat.js             # Chat logic & streaming state management
 │
 ├─ lib/
-│   └─ storage.js             # localStorage abstraction
+│   ├─ storage.js             # localStorage abstraction
+│   └─ prompts.js             # System prompt definitions
 │
 ├─ components/
-│   └─ chat/                  # Chat UI components
+│   └─ chat/
+│       └─ ChatBubble.jsx     # Chat UI bubbles with links & bullets
 │
 └─ README.md
 ```
@@ -59,12 +63,14 @@ src/
 
 ## ⚙️ How It Works
 
-1. User sends a message from the chat UI
-2. Message is saved to React state and `localStorage`
-3. Recent conversation context is sent to `/api/chat`
-4. Backend API formats a prompt and sends it to Ollama
-5. Ollama generates a response using the selected LLM
-6. The response is returned, saved, and rendered in the UI
+1. User sends a message from the chat UI  
+2. Message is saved to React state and `localStorage`  
+3. Recent conversation context (last N messages) is sent to `/api/chat`  
+4. Backend API builds a prompt using a **system prompt + chat history**  
+5. Ollama generates a response using **streaming mode**  
+6. The API forwards the **NDJSON stream** directly to the client  
+7. Frontend parses the stream and renders the response **token by token**  
+8. Final response is saved and persisted  
 
 ---
 
@@ -72,10 +78,8 @@ src/
 
 ### 1️⃣ Prerequisites
 
-Make sure you have:
-
-- **Node.js** (v18+ recommended)
-- **Ollama** installed → https://ollama.com
+- **Node.js** (v18+ recommended)  
+- **Ollama** installed → https://ollama.com  
 
 Pull and run a model:
 
@@ -89,8 +93,6 @@ If you face CUDA/GPU issues on Windows, run Ollama in CPU mode:
 set OLLAMA_NO_CUDA=1
 ollama run llama3
 ```
-
-(You can also use lighter models like `phi3`.)
 
 ---
 
@@ -108,41 +110,19 @@ npm install
 npm run dev
 ```
 
-Open in browser:
+Open:
 
-```
-http://localhost:3000
-```
-
-Chat page:
-
-```
-http://localhost:3000/chat
-```
+- http://localhost:3000  
+- http://localhost:3000/chat  
 
 ---
 
 ## 🦙 Ollama Configuration
 
-The app connects to Ollama at:
+- Ollama runs at: `http://localhost:11434`  
+- Endpoint used: `POST /api/generate`  
 
-```
-http://localhost:11434
-```
-
-Backend endpoint used:
-
-```
-POST /api/generate
-```
-
-Model can be changed inside:
-
-```
-app/api/chat/route.js
-```
-
-Example:
+Model selection in `app/api/chat/route.js`:
 
 ```js
 model: "llama3"
@@ -160,50 +140,39 @@ model: "phi3"
 
 - Chat messages are stored in **browser localStorage**
 - Messages persist across page refreshes
-- Storage logic is abstracted to allow easy migration to a database later
+- Storage layer is abstracted for future DB integration
 
 ---
 
 ## 🧠 Design Decisions
 
-- **localStorage instead of DB** for fast iteration and simplicity
-- **API abstraction layer** to keep UI independent of LLM provider
-- **Context window limiting** (last N messages) to control token usage
-- **UUID-based message IDs** using `crypto.randomUUID()`
-- **Fetch API** used instead of Axios for streaming readiness
+- localStorage for rapid iteration
+- Streaming responses for better UX
+- NDJSON parsing for token-level updates
+- System prompt abstraction for prompt control
+- Context window limiting to avoid token bloat
+- UUID-based message IDs
+- Fetch API chosen for streaming compatibility
 
 ---
 
 ## 🔮 Future Improvements
 
-- 🔥 Streaming responses (token-by-token output)
-- 🗂 Chat history summarization for long conversations
-- 🔐 Authentication & user sessions
-- 🧠 RAG (document-based question answering)
-- ☁️ Hosted LLM support (OpenAI, Groq, etc.)
-- 🚀 Production deployment (Vercel + hosted inference)
+- ⛔ Stop / cancel generation (AbortController)
+- 🗂 Chat history summarization
+- 🎛 Multiple prompt modes
+- 🧠 RAG (document-based Q&A)
+- 🔐 Authentication
+- ☁️ Hosted LLM support
+- 🚀 Production deployment
 
 ---
 
 ## 📸 Screenshots
 
-![alt text](image-2.png)
-![alt text](image-1.png)
-![alt text](image.png)
-
----
-
-## 📄 License
-
-This project is for learning and portfolio purposes.
-
----
-
-## 🙌 Acknowledgements
-
-- [Next.js](https://nextjs.org/)
-- [Ollama](https://ollama.com/)
-- Open-source LLM community
+![Chat UI](image-2.png)  
+![Streaming Response](image-1.png)  
+![Landing Page](image.png)
 
 ---
 
