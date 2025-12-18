@@ -13,7 +13,7 @@ const ChatMessage = ({ isLoading, messages }) => {
                     Start the conversation by typing a message below.
                 </p>
             </div>}
-            {isLoading && <div className=' flex w-full italic text-sm text-gray-600'>Thinking...please wait</div>}
+            {isLoading && <div className=' flex w-full italic text-sm text-gray-600'>Thinking...</div>}
         </div>
     )
 }

@@ -14,8 +14,9 @@ const ChatBubble = ({ type = "assistant", message }) => {
           max-w-[70%]
           px-5 py-3
           rounded-2xl
-          text-sm
-          leading-relaxed
+        text-[15px]
+leading-[1.6]
+tracking-[0.1px]
           whitespace-pre-wrap
           ${isUser
                         ? "bg-black text-white rounded-br-md"
@@ -28,7 +29,10 @@ const ChatBubble = ({ type = "assistant", message }) => {
                         const trimmed = line.trim();
 
                         // Bullet points
-                        if (trimmed.startsWith("* ") || trimmed.startsWith("- ")) {
+                        const isBullet =
+                            (trimmed.startsWith("* ") || trimmed.startsWith("- ")) &&
+                            trimmed.length > 3;
+                        if (isBullet) {
                             return (
                                 <li key={index} className="ml-4 list-disc">
                                     {renderTextWithLinks(trimmed.slice(2))}

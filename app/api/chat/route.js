@@ -2,35 +2,44 @@ import { SYSTEM_PROMPT } from "@/app/lib/prompts";
 import { NextResponse } from "next/server";
 
 const OLLAMA_URL = "http://localhost:11434";
+
 export async function POST(req) {
   try {
     const { messages } = await req.json();
 
     const prompt = `
-    ${SYSTEM_PROMPT}
-    ${messages
-      .map((m) =>
-        m.role === "user" ? `User : ${m.content}` : `Assistant : ${m.content}`
-      )
-      .join("\n")}
-    `;
-    const response = await fetch(`${OLLAMA_URL}/api/generate`, {
+${SYSTEM_PROMPT}
+
+${messages
+  .map((m) =>
+    m.role === "user"
+      ? `User: ${m.content}`
+      : `Assistant: ${m.content}`
+  )
+  .join("\n")}
+`;
+
+    const ollamaResponse = await fetch(`${OLLAMA_URL}/api/generate`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        prompt: prompt,
         model: "llama3",
-        stream: false,
+        prompt,
+        stream: true,
       }),
     });
 
-    const data = await response.json();
-    return NextResponse.json({
-      reply: data.response,
+    // 🚨 IMPORTANT: stream response back to client
+    return new Response(ollamaResponse.body, {
+      headers: {
+        "Content-Type": "text/plain",
+      },
     });
   } catch (error) {
-    return NextResponse.json({ error: "Ollama failed" }, { status: 500 });
+    console.error("Streaming error:", error);
+    return NextResponse.json(
+      { error: "Streaming failed" },
+      { status: 500 }
+    );
   }
 }
