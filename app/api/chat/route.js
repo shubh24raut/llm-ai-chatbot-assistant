@@ -1,3 +1,4 @@
+import { SYSTEM_PROMPT } from "@/app/lib/prompts";
 import { NextResponse } from "next/server";
 
 const OLLAMA_URL = "http://localhost:11434";
@@ -5,12 +6,14 @@ export async function POST(req) {
   try {
     const { messages } = await req.json();
 
-    const prompt = messages
+    const prompt = `
+    ${SYSTEM_PROMPT}
+    ${messages
       .map((m) =>
         m.role === "user" ? `User : ${m.content}` : `Assistant : ${m.content}`
       )
-      .join("\n");
-
+      .join("\n")}
+    `;
     const response = await fetch(`${OLLAMA_URL}/api/generate`, {
       method: "POST",
       headers: {
