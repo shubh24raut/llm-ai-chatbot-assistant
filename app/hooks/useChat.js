@@ -1,56 +1,61 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getAllMessages, saveMessage } from "../lib/storage";
+import { clearAllMessages, getAllMessages, saveMessage } from "../lib/storage";
 
 export const useChat = () => {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchMessages = async () => {
-    try {
-      const response = await getAllMessages();
-      setMessages(response);
-    } catch (error) {
-      alert(error?.message || "Failed to load messages");
-    } finally {
-    }
-  };
+  useEffect(() => {
+    const stored = getAllMessages();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMessages(stored);
+  }, []);
 
-  const sendMessage = (message) => {
-    if (!message) return;
+  const sendMessage = async (message) => {
+    if (!message || !message.trim()) return;
+    const userPayload = {
+      id: crypto.randomUUID(),
+      role: "user",
+      content: message,
+    };
+    const updatedMessages = [...messages, userPayload];
     try {
       setIsLoading(true);
-      const payload = {
-        id: Date.now(),
-        type: "user",
-        message,
+      saveMessage(userPayload);
+      setMessages(updatedMessages);
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ messages: updatedMessages.slice(-10) }),
+      });
+      const data = await res.json();
+      const assistantPayload = {
+        id: crypto.randomUUID(),
+        role: "assistant",
+        content: data.reply,
       };
-      saveMessage(payload);
-      setMessages((prevMessages) => [...prevMessages, payload]);
-      setTimeout(() => {
-        const payload = {
-          id: Date.now(),
-          type: "assistant",
-          message: "This is assistant message",
-        };
-        saveMessage(payload);
-        setMessages((prevMessages) => [...prevMessages, payload]);
-        setIsLoading(false);
-      }, 2000);
+      saveMessage(assistantPayload);
+      setMessages((prevMessages) => [...prevMessages, assistantPayload]);
+      setIsLoading(false);
     } catch (error) {
       alert(error?.message || "Failed to send message");
       setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchMessages();
-  }, []);
+  const clearAllChat = () => {
+    clearAllMessages();
+    setMessages([]);
+  };
 
   return {
     messages,
     isLoading,
     sendMessage,
+    clearAllChat,
   };
 };
