@@ -50,11 +50,14 @@ src/
 │
 ├─ lib/
 │   ├─ storage.js             # localStorage abstraction
-│   └─ prompts.js             # System prompt definitions
+│   ├─ prompts.js             # System prompt definitions
+    └─ utils.js               # Utility functions
 │
 ├─ components/
-│   └─ chat/
-│       └─ ChatBubble.jsx     # Chat UI bubbles with links & bullets
+│   ├─ ChatBubble.jsx
+|   ├─ ChatHeader.jsx
+|   ├─ ChatMessage.jsx
+|   └─ ChatFooter.jsx
 │
 └─ README.md
 ```
