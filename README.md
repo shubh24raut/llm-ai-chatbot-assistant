@@ -187,7 +187,9 @@ model: "phi3"
 
 ## 📸 Screenshots
 
-_Add screenshots of the landing page and chat UI here._
+![alt text](image-2.png)
+![alt text](image-1.png)
+![alt text](image.png)
 
 ---
 
@@ -207,7 +209,7 @@ This project is for learning and portfolio purposes.
 
 ## 👨‍💻 Author
 
-**Your Name**  
+**Shubham Kiran Raut**  
 Frontend Developer | React | GenAI
 
 ---
