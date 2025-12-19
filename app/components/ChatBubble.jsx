@@ -11,7 +11,7 @@ const ChatBubble = ({ type = "assistant", message }) => {
         >
             <div
                 className={`
-          max-w-[70%]
+          
           px-5 py-3
           rounded-2xl
         text-[15px]
@@ -19,8 +19,8 @@ leading-[1.6]
 tracking-[0.1px]
           whitespace-pre-wrap
           ${isUser
-                        ? "bg-black text-white rounded-br-md"
-                        : "bg-gray-200 text-black rounded-bl-md"
+                        ? "bg-gray-800 text-white rounded-br-md max-w-[70%]"
+                        : " bg-gray-500 text-black rounded-bl-md"
                     }
         `}
             >

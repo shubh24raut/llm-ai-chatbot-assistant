@@ -14,7 +14,7 @@ const ChatPage = () => {
             <div className='flex flex-col w-full max-w-3xl h-full'>
                 <ChatHeader clearAllChat={clearAllChat} />
                 <ChatMessage isLoading={isLoading} messages={messages} />
-                <ChatFooter sendMessage={sendMessage} />
+                <ChatFooter isLoading={isLoading} sendMessage={sendMessage} />
             </div>
         </div>
     )

@@ -7,9 +7,9 @@ const ChatHeader = ({ clearAllChat }) => {
   }
 
   return (
-    <div className='flex items-center justify-between text-2xl border-b border-gray-100 p-2 bg-gray-800'>
-      <span>
-        LLM CHAT ASSISTANT
+    <div className='flex items-center justify-between text-2xl py-2 bg-gray-800 px-4'>
+      <span >
+        LLM Studio
       </span>
       <button onClick={clearAll} className='text-sm border border-white px-4 py-2 rounded cursor-pointer'>Clear Chat</button>
     </div>
