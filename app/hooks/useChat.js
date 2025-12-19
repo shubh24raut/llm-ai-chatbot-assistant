@@ -22,12 +22,10 @@ export const useChat = () => {
       content: message,
     };
 
-    const updatedMessages = [...messages, userPayload];
     saveMessage(userPayload);
-    setMessages(updatedMessages);
+    setMessages((prev) => [...prev, userPayload]);
     setIsLoading(true);
 
-    // Placeholder assistant message
     const assistantPayload = {
       id: crypto.randomUUID(),
       role: "assistant",
@@ -36,18 +34,19 @@ export const useChat = () => {
 
     setMessages((prev) => [...prev, assistantPayload]);
 
+    let finalAssistantContent = "";
+
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: updatedMessages.slice(-10),
+          messages: [...getAllMessages(), userPayload].slice(-10),
         }),
       });
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
-
       let buffer = "";
 
       while (true) {
@@ -55,39 +54,32 @@ export const useChat = () => {
         if (done) break;
 
         buffer += decoder.decode(value, { stream: true });
-
-        // Ollama sends JSON per line
         const lines = buffer.split("\n");
-        buffer = lines.pop(); // keep incomplete line
+        buffer = lines.pop();
 
         for (const line of lines) {
           if (!line.trim()) continue;
 
-          try {
-            const json = JSON.parse(line);
+          const json = JSON.parse(line);
 
-            if (json.response) {
-              setMessages((prev) =>
-                prev.map((msg) =>
-                  msg.id === assistantPayload.id
-                    ? { ...msg, content: msg.content + json.response }
-                    : msg
-                )
-              );
-            }
+          if (json.response) {
+            finalAssistantContent += json.response;
 
-            if (json.done) {
-              setIsLoading(false);
-            }
-          } catch (e) {
-            console.error("Parse error:", e);
+            setMessages((prev) =>
+              prev.map((msg) =>
+                msg.id === assistantPayload.id
+                  ? { ...msg, content: finalAssistantContent }
+                  : msg
+              )
+            );
           }
         }
       }
 
+      // ✅ Save FINAL content
       saveMessage({
         ...assistantPayload,
-        content: assistantPayload.content,
+        content: finalAssistantContent,
       });
 
       setIsLoading(false);
