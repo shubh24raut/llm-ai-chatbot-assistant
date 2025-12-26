@@ -4,7 +4,6 @@ import React from 'react'
 import ChatHeader from '../components/ChatHeader'
 import ChatMessage from '../components/ChatMessage'
 import ChatFooter from '../components/ChatFooter'
-import { useChat } from '../hooks/useChat'
 
 const ChatPage = () => {
     const { isLoading, messages, sendMessage, clearAllChat } = useChat();
