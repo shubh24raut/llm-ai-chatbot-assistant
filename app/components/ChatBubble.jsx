@@ -6,21 +6,20 @@ const ChatBubble = ({ type = "assistant", message }) => {
 
     return (
         <div
-            className={`w-full flex ${isUser ? "justify-end" : "justify-start"
-                } mb-3`}
+            className={`w-full flex ${isUser ? "justify-end" : "justify-start"} mb-3`}
         >
             <div
                 className={`
           
-          px-5 py-3
+          px-2 py-3
           rounded-2xl
         text-[15px]
 leading-[1.6]
 tracking-[0.1px]
           whitespace-pre-wrap
           ${isUser
-                        ? "bg-gray-800 text-white rounded-br-md max-w-[70%]"
-                        : " bg-gray-500 text-black rounded-bl-md"
+                        ? "bg-gray-300 text-black  rounded-br-md max-w-[70%]"
+                        : " text-white"
                     }
         `}
             >
@@ -46,11 +45,7 @@ tracking-[0.1px]
                         }
 
                         // Normal paragraph
-                        return (
-                            <p key={index}>
-                                {renderTextWithLinks(trimmed)}
-                            </p>
-                        );
+                        return <p key={index}>{renderTextWithLinks(trimmed)}</p>;
                     })}
                 </ul>
             </div>

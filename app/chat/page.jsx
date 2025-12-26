@@ -1,23 +1,31 @@
 'use client'
 
-import React from 'react'
+import ChatSidebar from '../components/ChatSidebar'
 import ChatHeader from '../components/ChatHeader'
 import ChatMessage from '../components/ChatMessage'
 import ChatFooter from '../components/ChatFooter'
 import { useChat } from '../hooks/useChat'
 
-const ChatPage = () => {
-    const { isLoading, messages, sendMessage, clearAllChat } = useChat();
+export default function ChatPage() {
+  const { isLoading, messages, sendMessage, clearAllChat } = useChat()
 
-    return (
-        <div className='flex items-center justify-center  h-full w-full p-2 sm:p-6 md:p-10 overflow-hidden'>
-            <div className='flex flex-col w-full max-w-3xl h-full'>
-                <ChatHeader clearAllChat={clearAllChat} />
-                <ChatMessage isLoading={isLoading} messages={messages} />
-                <ChatFooter isLoading={isLoading} sendMessage={sendMessage} />
-            </div>
+  return (
+    <div className="flex h-screen w-full overflow-hidden">
+      {/* Sidebar */}
+      <ChatSidebar />
+
+      {/* Main Chat Area */}
+      <div className="flex flex-col flex-1 h-full bg-gray-800">
+        <ChatHeader clearAllChat={clearAllChat} />
+
+        {/* Messages scroll area */}
+        <div className="flex-1 overflow-y-auto  ">
+          <ChatMessage isLoading={isLoading} messages={messages} />
         </div>
-    )
-}
 
-export default ChatPage
+        {/* Input */}
+        <ChatFooter isLoading={isLoading} sendMessage={sendMessage} />
+      </div>
+    </div>
+  )
+}

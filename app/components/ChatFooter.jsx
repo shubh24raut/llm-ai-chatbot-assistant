@@ -14,8 +14,8 @@ const ChatFooter = ({ isLoading, sendMessage }) => {
 
 
     return (
-        <div className='w-full bg-gray-400 text-black p-6'>
-            <div className='w-full flex   rounded-3xl px-4 bg-gray-200 shadow-md shadow-gray-600 py-2 items-center space-x-2'>
+        <div className='w-full max-w-4xl mx-auto  px-4  text-black '>
+            <div className='w-full flex mb-6  rounded-3xl px-4 bg-gray-200 shadow-md shadow-gray-600 py-3 items-center space-x-2'>
                 <input
                     disabled={isLoading}
                     value={singleMessage}

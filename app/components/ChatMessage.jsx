@@ -15,7 +15,7 @@ const ChatMessage = ({ isLoading, messages }) => {
     }, [messages, isLoading]);
 
     return (
-        <div ref={containerRef} className='h-full w-full px-8 py-4 bg-gray-400 text-black flex flex-col space-y-2 overflow-y-auto'>
+        <div ref={containerRef} className='h-full w-full max-w-4xl mx-auto px-2  py-4  text-black flex flex-col space-y-2 overflow-y-auto scrollbar-hide '>
             {messages?.length > 0 ? messages.map((msg, idx) => <ChatBubble key={idx} type={msg.role} message={msg.content} />) : <div className="flex flex-col items-center justify-center h-full text-center text-gray-600 space-y-3">
                 <MessageCircle size={48} className="opacity-50" />
                 <p className="text-lg font-medium">No messages yet</p>

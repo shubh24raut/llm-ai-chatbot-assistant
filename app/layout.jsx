@@ -25,7 +25,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="w-full max-w-6xl mx-auto h-screen">
+        <div className="min-h-screen h-screen w-screen overflow-hidden flex">
           <AuthProvider>
             {children}
           </AuthProvider>
