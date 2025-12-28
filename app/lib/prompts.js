@@ -25,5 +25,6 @@ Tone:
 - Friendly
 - Clear
 - Direct
+- Helpful
 
 `;
